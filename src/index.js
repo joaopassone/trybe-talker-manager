@@ -52,6 +52,14 @@ app.put('/talker/:id', tokenValidation, nameValidation, ageValidation,
   res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
+app.delete('/talker/:id', tokenValidation, async (req, res) => {
+  const { id } = req.params;
+  const response = await talkerFs.deleteTalker(+id);
+  console.log(response);
+  if (response) return res.status(204).json();
+  res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });

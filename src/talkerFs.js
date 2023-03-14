@@ -1,19 +1,20 @@
 const fs = require('fs').promises;
 
-const findAll = async () => {
+const readFile = async () => {
   const result = await fs.readFile(`${__dirname}/talker.json`, 'utf-8');
   return JSON.parse(result);
 };
 
+const findAll = async () => readFile();
+
 const findById = async (talkerId) => {
-  const talkers = await fs.readFile(`${__dirname}/talker.json`, 'utf-8');
-  const result = JSON.parse(talkers).find(({ id }) => id === talkerId);
+  const talkers = await readFile();
+  const result = talkers.find(({ id }) => id === talkerId);
   return result;
 };
 
 const addTalker = async (talker) => {
-  const talkersJson = await fs.readFile(`${__dirname}/talker.json`, 'utf-8');
-  const talkers = JSON.parse(talkersJson);
+  const talkers = await readFile();
   const ids = talkers.map(({ id }) => id);
   const id = Math.max(...ids) + 1;
   talkers.push({ id, ...talker });
@@ -22,8 +23,7 @@ const addTalker = async (talker) => {
 };
 
 const updateTalker = async (id, talker) => {
-  const talkersJson = await fs.readFile(`${__dirname}/talker.json`, 'utf-8');
-  const talkers = JSON.parse(talkersJson);
+  const talkers = await readFile();
   const index = talkers.findIndex(({ id: updatedId }) => updatedId === id);
 
   if (index !== -1) {
@@ -33,9 +33,21 @@ const updateTalker = async (id, talker) => {
   }
 };
 
+const deleteTalker = async (id) => {
+  const talkers = await readFile();
+  const index = talkers.findIndex(({ id: deleteId }) => deleteId === id);
+
+  if (index !== -1) {
+    talkers.splice(index, 1);
+    await fs.writeFile(`${__dirname}/talker.json`, JSON.stringify(talkers, null, 2));
+    return true;
+  }
+};
+
 module.exports = {
   findAll,
   findById,
   addTalker,
   updateTalker,
+  deleteTalker,
 };
