@@ -44,10 +44,19 @@ const deleteTalker = async (id) => {
   }
 };
 
+const findByQ = async (searchTerm) => {
+  const talkers = await readFile();
+  if (!searchTerm) return talkers;
+  const result = talkers
+    .filter(({ name }) => name.toLowerCase().includes(searchTerm.toLowerCase()));
+  return result;
+};
+
 module.exports = {
   findAll,
   findById,
   addTalker,
   updateTalker,
   deleteTalker,
+  findByQ,
 };
