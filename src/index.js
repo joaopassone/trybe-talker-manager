@@ -1,4 +1,5 @@
 const express = require('express');
+const randomToken = require('random-token');
 const talkerFs = require('./talkerFs');
 
 const app = express();
@@ -21,8 +22,13 @@ app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const result = await talkerFs.findById(+id);
   if (result) return res.status(200).json(result);
-  res.status(404).json({ message: "Pessoa palestrante não encontrada" });
-})
+  res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+});
+
+app.post('/login', async (_req, res) => {
+  const token = randomToken(16);
+  res.status(200).json({ token });
+});
 
 app.listen(PORT, () => {
   console.log('Online');
