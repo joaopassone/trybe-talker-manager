@@ -1,4 +1,4 @@
-const validation = (req, res, next) => {
+const loginValidation = (req, res, next) => {
   const { email, password } = req.body;
   if (!email) {
     return res.status(400).json({ message: 'O campo "email" é obrigatório' });
@@ -15,4 +15,4 @@ const validation = (req, res, next) => {
   next();
 };
 
-module.exports = validation;
+module.exports = loginValidation;

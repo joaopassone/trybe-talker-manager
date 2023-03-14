@@ -1,7 +1,9 @@
 const express = require('express');
 const randomToken = require('random-token');
 const talkerFs = require('./talkerFs');
-const validation = require('./loginValidation');
+const loginValidation = require('./loginValidation');
+const { tokenValidation, nameValidation, ageValidation,
+  talkValidation, watchedAtValidation, rateValidation } = require('./talkerValidation');
 
 const app = express();
 app.use(express.json());
@@ -16,7 +18,7 @@ app.get('/', (_request, response) => {
 
 app.get('/talker', async (_req, res) => {
   const result = await talkerFs.findAll();
-  res.status(200).json(result || []);
+  res.status(200).json(result);
 });
 
 app.get('/talker/:id', async (req, res) => {
@@ -26,9 +28,16 @@ app.get('/talker/:id', async (req, res) => {
   res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
-app.post('/login', validation, async (_req, res) => {
+app.post('/login', loginValidation, async (_req, res) => {
   const token = randomToken(16);
   res.status(200).json({ token });
+});
+
+app.post('/talker', tokenValidation, nameValidation, ageValidation,
+  talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
+  const { body } = req;
+  const result = await talkerFs.addTalker(body);
+  res.status(201).json(result);
 });
 
 app.listen(PORT, () => {
