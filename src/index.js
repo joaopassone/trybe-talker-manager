@@ -40,6 +40,18 @@ app.post('/talker', tokenValidation, nameValidation, ageValidation,
   res.status(201).json(result);
 });
 
+app.put('/talker/:id', tokenValidation, nameValidation, ageValidation,
+  talkValidation, watchedAtValidation, rateValidation, async (req, res) => {
+  const { body, params } = req;
+  const { id } = params;
+  const result = await talkerFs.updateTalker(+id, body);
+
+  if (result) {
+    return res.status(200).json(result);
+  }
+  res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
