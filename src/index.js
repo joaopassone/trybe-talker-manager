@@ -5,6 +5,7 @@ const loginValidation = require('./loginValidation');
 const { tokenValidation, nameValidation, ageValidation, talkValidation,
   watchedAtValidation, rateValidation, rateChangeValidation } = require('./talkerValidation');
 const { rateSearchValidation, dateValidation } = require('./searchValidation');
+const { selectAll } = require('./db/talkerDB');
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,20 @@ app.get('/', (_request, response) => {
 
 app.get('/talker', async (_req, res) => {
   const result = await talkerFs.findAll();
+  res.status(200).json(result);
+});
+
+app.get('/talker/db', async (_req, res) => {
+  const [talkers] = await selectAll();
+  const result = talkers.map((talker) => ({
+    id: talker.id,
+    name: talker.name,
+    age: talker.age,
+    talk: {
+      watchedAt: talker.watchedAt,
+      rate: talker.rate,
+    },
+  }));
   res.status(200).json(result);
 });
 
