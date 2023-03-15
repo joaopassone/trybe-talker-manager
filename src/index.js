@@ -4,7 +4,7 @@ const talkerFs = require('./talkerFs');
 const loginValidation = require('./loginValidation');
 const { tokenValidation, nameValidation, ageValidation,
   talkValidation, watchedAtValidation, rateValidation } = require('./talkerValidation');
-const { rateSearchValidation } = require('./searchValidation');
+const { rateSearchValidation, dateValidation } = require('./searchValidation');
 
 const app = express();
 app.use(express.json());
@@ -22,10 +22,12 @@ app.get('/talker', async (_req, res) => {
   res.status(200).json(result);
 });
 
-app.get('/talker/search/', tokenValidation, rateSearchValidation, async (req, res) => {
-  const { q, rate } = req.query;
+app.get('/talker/search/', tokenValidation,
+  rateSearchValidation, dateValidation, async (req, res) => {
+  const { q, rate, date } = req.query;
   const filteredByQ = await talkerFs.findByQ(q);
-  const result = await talkerFs.findByRate(filteredByQ, +rate);
+  const filteredByRate = await talkerFs.findByRate(filteredByQ, +rate);
+  const result = await talkerFs.findByWatchedDate(filteredByRate, date);
   res.status(200).json(result);
 });
 

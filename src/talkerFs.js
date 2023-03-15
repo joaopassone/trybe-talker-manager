@@ -59,6 +59,13 @@ const findByRate = async (talkers, rate) => {
   return result;
 };
 
+const findByWatchedDate = async (talkers, date) => {
+  if (!date) return talkers;
+  const result = talkers
+    .filter((talker) => talker.talk.watchedAt === date);
+  return result;
+};
+
 module.exports = {
   findAll,
   findById,
@@ -67,4 +74,5 @@ module.exports = {
   deleteTalker,
   findByQ,
   findByRate,
+  findByWatchedDate,
 };
