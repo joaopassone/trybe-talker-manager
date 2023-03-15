@@ -5,6 +5,10 @@ const readFile = async () => {
   return JSON.parse(result);
 };
 
+const writeFile = async (talkers) => {
+  await fs.writeFile(`${__dirname}/talker.json`, JSON.stringify(talkers, null, 2));
+};
+
 const findAll = async () => readFile();
 
 const findById = async (talkerId) => {
@@ -18,7 +22,7 @@ const addTalker = async (talker) => {
   const ids = talkers.map(({ id }) => id);
   const id = Math.max(...ids) + 1;
   talkers.push({ id, ...talker });
-  await fs.writeFile(`${__dirname}/talker.json`, JSON.stringify(talkers, null, 2));
+  await writeFile(talkers);
   return { id, ...talker };
 };
 
@@ -28,7 +32,7 @@ const updateTalker = async (id, talker) => {
 
   if (index !== -1) {
     talkers.splice(index, 1, { id, ...talker });
-    await fs.writeFile(`${__dirname}/talker.json`, JSON.stringify(talkers, null, 2));
+    await writeFile(talkers);
     return { id, ...talker };
   }
 };
@@ -39,7 +43,7 @@ const deleteTalker = async (id) => {
 
   if (index !== -1) {
     talkers.splice(index, 1);
-    await fs.writeFile(`${__dirname}/talker.json`, JSON.stringify(talkers, null, 2));
+    await writeFile(talkers);
     return true;
   }
 };
@@ -73,7 +77,20 @@ const changeRate = async (id, rate) => {
   const newTalk = { ...talker.talk, rate };
   const newTalker = { ...talker, talk: newTalk };
   talkers.splice(index, 1, newTalker);
-  await fs.writeFile(`${__dirname}/talker.json`, JSON.stringify(talkers, null, 2));
+  await writeFile(talkers);
+};
+
+const fixDataFormat = (talkers) => {
+  const result = talkers.map(({ id, name, age, watchedAt, rate }) => ({
+    id,
+    name,
+    age,
+    talk: {
+      watchedAt,
+      rate,
+    },
+  }));
+  return result;
 };
 
 module.exports = {
@@ -86,4 +103,5 @@ module.exports = {
   findByRate,
   findByWatchedDate,
   changeRate,
+  fixDataFormat,
 };
