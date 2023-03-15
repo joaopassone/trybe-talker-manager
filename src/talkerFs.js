@@ -52,6 +52,13 @@ const findByQ = async (searchTerm) => {
   return result;
 };
 
+const findByRate = async (talkers, rate) => {
+  if (!rate) return talkers;
+  const result = talkers
+    .filter((talker) => talker.talk.rate === rate);
+  return result;
+};
+
 module.exports = {
   findAll,
   findById,
@@ -59,4 +66,5 @@ module.exports = {
   updateTalker,
   deleteTalker,
   findByQ,
+  findByRate,
 };
