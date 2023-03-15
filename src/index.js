@@ -2,8 +2,8 @@ const express = require('express');
 const randomToken = require('random-token');
 const talkerFs = require('./talkerFs');
 const loginValidation = require('./loginValidation');
-const { tokenValidation, nameValidation, ageValidation,
-  talkValidation, watchedAtValidation, rateValidation } = require('./talkerValidation');
+const { tokenValidation, nameValidation, ageValidation, talkValidation,
+  watchedAtValidation, rateValidation, rateChangeValidation } = require('./talkerValidation');
 const { rateSearchValidation, dateValidation } = require('./searchValidation');
 
 const app = express();
@@ -29,6 +29,13 @@ app.get('/talker/search/', tokenValidation,
   const filteredByRate = await talkerFs.findByRate(filteredByQ, +rate);
   const result = await talkerFs.findByWatchedDate(filteredByRate, date);
   res.status(200).json(result);
+});
+
+app.patch('/talker/rate/:id', tokenValidation, rateChangeValidation, async (req, res) => {
+  const { id } = req.params;
+  const { rate } = req.body;
+  await talkerFs.changeRate(+id, rate);
+  res.status(204).json();
 });
 
 app.get('/talker/:id', async (req, res) => {

@@ -66,6 +66,16 @@ const findByWatchedDate = async (talkers, date) => {
   return result;
 };
 
+const changeRate = async (id, rate) => {
+  const talkers = await readFile();
+  const index = talkers.findIndex(({ id: changeRateId }) => changeRateId === id);
+  const talker = talkers.find(({ id: changeRateId }) => changeRateId === id);
+  const newTalk = { ...talker.talk, rate };
+  const newTalker = { ...talker, talk: newTalk };
+  talkers.splice(index, 1, newTalker);
+  await fs.writeFile(`${__dirname}/talker.json`, JSON.stringify(talkers, null, 2));
+};
+
 module.exports = {
   findAll,
   findById,
@@ -75,4 +85,5 @@ module.exports = {
   findByQ,
   findByRate,
   findByWatchedDate,
+  changeRate,
 };
